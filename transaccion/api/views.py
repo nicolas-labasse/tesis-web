@@ -8,6 +8,7 @@ from transaccion.models import Transaccion
 class TransaccionApiViewSet(ModelViewSet):
     serializer_class = TransaccionSerializer
     queryset = Transaccion.objects.all()
+    print("TransaccionApiViewSet")
     def create(self, request, *args, **kwargs):
         data = request.data
         print("Datos recibidos en el webhook:", data)
