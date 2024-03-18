@@ -12,6 +12,7 @@ class TransaccionApiViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
+        print(data)
         mp_id = data.get('id')
         usuario = 1
         precio = 200
