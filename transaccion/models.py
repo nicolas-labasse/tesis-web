@@ -8,6 +8,7 @@ class Transaccion(models.Model):
     mp_id = models.CharField(max_length=100, blank=True, null=True)
     precio = models.FloatField(null=True, blank=True)
     fechaCreacion = models.DateField(auto_now_add=True)
+    estado_pago = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
         return self.usuario.nombre + self.usuario.email
