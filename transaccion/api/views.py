@@ -1,11 +1,15 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from transaccion.api.serializers import TransaccionSerializer
+from transaccion.models import Transaccion
 
 
 class TransaccionApiViewSet(ModelViewSet):
-    print('vista del webhook')
-    def get(self, request, *args, **kwargs):
+    serializer_class = TransaccionSerializer
+    queryset = Transaccion.objects.all()
+    print("desde la vista del webhook")
+    def create(self, request, *args, **kwargs):
         data = request.data
-        print("Datos recibidos en la vista:", data)
-        return Response(data)
+        print("Datos recibidos en el webhook:", data)
+        return Response()
