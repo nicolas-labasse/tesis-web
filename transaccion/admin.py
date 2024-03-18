@@ -7,3 +7,5 @@ class TransaccionAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'precio', 'fechaCreacion')
     search_fields = ('usuario', 'precio')
 
+
+

@@ -5,19 +5,14 @@ from usuario.models import Usuario
 
 class Transaccion(models.Model):
     usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
-    precio = models.FloatField()
+    mp_id = models.CharField(max_length=100, blank=True, null=True)
+    precio = models.FloatField(null=True, blank=True)
     fechaCreacion = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.usuario.nombre + self.usuario.email
-    
 
 
-class TransaccionID(models.Model):
-    idTransaccion = models.CharField(max_length=100)
-    fechaCreacion = models.DateField(auto_now_add=True)
 
-    def __str__(self):
-        return self.transaccion.usuario.nombre + self.transaccion.usuario.email + self.idTransaccion
 
 
