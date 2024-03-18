@@ -16,7 +16,7 @@ class TransaccionApiViewSet(ModelViewSet):
         mp_id = data.get('id')
         
         if mp_id:
-            mp_api_url = 'https://api.mercadopago.com/v1/payments/' + mp_id
+            mp_api_url = 'https://api.mercadopago.com/v1/payments/' + str(mp_id)
             headers = {
                 'Authorization': 'Bearer <TEST-4400576109328385-020611-19bb4fe2e975a39a1a2050a1955b5a15-1669576371>',
                 'Content-Type': 'application/json'
