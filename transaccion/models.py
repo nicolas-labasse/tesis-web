@@ -10,5 +10,14 @@ class Transaccion(models.Model):
 
     def __str__(self):
         return self.usuario.nombre + self.usuario.email
+    
+
+
+class TransaccionID(models.Model):
+    idTransaccion = models.CharField(max_length=100)
+    fechaCreacion = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.transaccion.usuario.nombre + self.transaccion.usuario.email + self.idTransaccion
 
 

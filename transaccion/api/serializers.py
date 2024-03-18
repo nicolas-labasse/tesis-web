@@ -1,8 +1,10 @@
 from rest_framework.serializers import ModelSerializer
-from transaccion.models import Transaccion
+from transaccion.models import  TransaccionID
+
+
 
 
 class TransaccionSerializer(ModelSerializer):
     class Meta:
-        model = Transaccion
+        model = TransaccionID
         fields = '__all__'
