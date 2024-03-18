@@ -53,6 +53,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+CSRF_COOKIE_SECURE = False  # Cambiar a True en producción
+CSRF_TRUSTED_ORIGINS = ['https://tesis-web.onrender.com']
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
