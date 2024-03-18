@@ -1,3 +1,9 @@
 from django.contrib import admin
+from transaccion.models import Transaccion
 
-# Register your models here.
+
+@admin.register(Transaccion)
+class TransaccionAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'precio', 'fechaCreacion')
+    search_fields = ('usuario', 'precio')
+

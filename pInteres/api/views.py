@@ -34,7 +34,6 @@ class PuntoInteresApiViewSet(ModelViewSet):
         
         imagen_url = data.get('imagen_url', '')  
         data['imagen_url'] = f'{ip_y_puerto}{imagen_url}'
-        print(data['imagen_url'])
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)

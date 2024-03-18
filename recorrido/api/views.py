@@ -29,8 +29,8 @@ class RecorridoApiViewSet(ModelViewSet):
         return RecorridoSerializer
 
     def create(self, request, *args, **kwargs):
-        data = request.data.dict()
-        puntos_ids = data.get('puntoInteres', [])
+        data = request.data.copy()
+        puntos_ids = data.getlist('puntoInteres', [])
         data.pop('puntoInteres', None)
 
         serializer = self.get_serializer(data=data)
@@ -40,20 +40,47 @@ class RecorridoApiViewSet(ModelViewSet):
 
         headers = self.get_success_headers(serializer.data)
         return Response(RecorridoSerializer(recorrido).data, status=status.HTTP_201_CREATED, headers=headers)
+    
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        data = request.data.copy()
 
+        puntos_ids = data.getlist('puntoInteres', [])
+        data.pop('puntoInteres', None)
+
+        serializer = self.get_serializer(instance, data=data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+
+        self.perform_update(serializer, puntos_ids)
+
+        return Response(serializer.data)
+    
+    def perform_update(self, serializer, puntos_ids):
+        recorrido = serializer.save()
+
+        recorrido.puntoInteres.clear()
+
+        self._update_puntos(recorrido, puntos_ids)
+
+    def _update_puntos(self, recorrido, puntos_ids):
+        for punto_id in puntos_ids:
+            try:
+                punto = PuntoInteres.objects.get(id=punto_id)
+                recorrido.puntoInteres.add(punto)
+            except PuntoInteres.DoesNotExist:
+                print(f'Punto de interés con ID {punto_id} no encontrado.')
+    
     def perform_create(self, serializer, puntos_ids):
         recorrido = serializer.save()
 
-        print("Recorrido antes del bucle:", recorrido.puntos.all())
 
         for punto_id in puntos_ids:
             try:
                 punto = PuntoInteres.objects.get(id=punto_id)
-                recorrido.puntos.add(punto)
+                recorrido.puntoInteres.add(punto)
             except PuntoInteres.DoesNotExist:
                 print(f'Punto de interés con ID {punto_id} no encontrado.')
-
-        print("Recorrido después del bucle:", recorrido.puntos.all())
 
         return recorrido
 

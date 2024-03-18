@@ -22,6 +22,8 @@ from drf_yasg import openapi
 from pInteres.api.router import router as router_pInteres
 from recorrido.api.router import router as router_recorrido
 from usuario.api.router import router as router_usuario
+from transaccion.api.router import router as router_transaccion
+from calificacion.api.router import router as router_calificacion
 from rest_framework import permissions
 from django.contrib.auth.views import LoginView
 
@@ -44,6 +46,11 @@ urlpatterns = [
     path('api/recorrido/', include(router_recorrido.urls), {'basename': 'recorrido'}),
     path('api/puntoInteres/', include(router_pInteres.urls), {'basename': 'puntoInteres'}),
     path('api/usuario/', include(router_usuario.urls), {'basename': 'usuario'}),
+    path('api/usuario/', include('usuario.api.router'), {'basename': 'usuario-favorito'}),
+    path('api/usuario/', include('usuario.api.router'), {'basename': 'editar-imagen-usuario'}),
+    path('api/usuario/', include('usuario.api.router'), {'basename': 'editar-usuario-nombre'}),
+    path('api/transaccion/', include(router_transaccion.urls), {'basename': 'transaccion'}),
+    path('api/calificacion/', include(router_calificacion.urls), {'basename': 'calificacion'}),
     
 
     # Swagger
