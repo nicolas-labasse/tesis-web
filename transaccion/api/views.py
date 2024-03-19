@@ -13,10 +13,13 @@ class TransaccionApiViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
+        print(data)
         mp_id = data.get('id')
         usuario_id = 1
         precio = data.get('external_reference')
+        print(precio,'precio')
         
+
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
             transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, precio=precio)
