@@ -13,12 +13,11 @@ class TransaccionApiViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        print("Datos recibidos en el webhook:", data)
         mp_id = data.get('id')
-        usuario_id = 1
-        
+        usuario_id = data.get('external_reference')
+
         if mp_id and usuario_id:
-            usuario = get_object_or_404(Usuario, id=1)
+            usuario = get_object_or_404(Usuario, id=usuario_id)
             transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario)
             serializer = self.get_serializer(transaccion)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
