@@ -13,36 +13,17 @@ class TransaccionApiViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
+        print("Datos recibidos en el webhook:", data)
         mp_id = data.get('id')
+        usuario_id = data.get('usuario_id')
+        print("ID de la transacción:", mp_id)
+        print("ID del usuario:", usuario_id)
         
-        if mp_id:
-            mp_api_url = 'https://api.mercadopago.com/v1/payments/' + str(mp_id)
-            headers = {
-                'Authorization': 'Bearer <TEST-4400576109328385-020611-19bb4fe2e975a39a1a2050a1955b5a15-1669576371>',
-                'Content-Type': 'application/json'
-            }
-            response = requests.get(mp_api_url, headers=headers)
-
-            if response.status_code == 200:
-                mp_data = response.json()
-                precio_pago = mp_data['transaction_amount']
-                estado_pago = mp_data['status']
-                fecha_pago = mp_data['date_created']
-                
-                usuario = get_object_or_404(Usuario, id=1)
-                
-                transaccion = Transaccion.objects.create(
-                    mp_id=mp_id, 
-                    usuario=usuario, 
-                    precio=precio_pago,
-                    estado_pago=estado_pago,
-                    fecha_pago=fecha_pago
-                )
-                
-                serializer = self.get_serializer(transaccion)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            else:
-                return Response("Error al obtener información de Mercado Pago", status=status.HTTP_400_BAD_REQUEST) 
+        if mp_id and usuario_id:
+            usuario = get_object_or_404(Usuario, id=usuario_id)
+            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario)
+            serializer = self.get_serializer(transaccion)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response("Error: ID de pago no proporcionado", status=status.HTTP_400_BAD_REQUEST)
+            return Response("Error: Se requiere ID de transacción y ID de usuario", status=status.HTTP_400_BAD_REQUEST)
 
