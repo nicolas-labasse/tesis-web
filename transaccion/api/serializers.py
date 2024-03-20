@@ -6,7 +6,7 @@ from transaccion.models import  Transaccion
 class TransaccionSerializer(ModelSerializer):
     class Meta:
             model = Transaccion
-            fields = '__all__'
+            fields = ['id', 'usuario', 'mp_id', 'precio', 'fechaCreacion']
 
 
 
