@@ -10,7 +10,7 @@ class Transaccion(models.Model):
     fechaCreacion = models.DateField(auto_now_add=True)
 
     def __str__(self):
-        return self.usuario.nombre + self.usuario.email
+        return self.usuario.nombre
 
 
 
