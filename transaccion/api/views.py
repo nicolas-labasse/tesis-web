@@ -1,3 +1,4 @@
+import json
 import requests
 from rest_framework import status
 from rest_framework.response import Response
@@ -16,11 +17,12 @@ class TransaccionApiViewSet(ModelViewSet):
         data = request.data
         mp_id = data.get('id')
         usuario_id = 1
-        precio = data['external_reference']
+        with open('solicitud.json', 'w') as file:
+           json.dump(data, file, indent=4)
         
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
-            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, precio=int(precio))
+            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario)
             serializer = self.get_serializer(transaccion)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
