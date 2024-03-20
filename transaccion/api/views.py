@@ -14,12 +14,13 @@ class TransaccionApiViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        mp_id = data.get('collection_id')
+        mp_id = data.get('id')
         usuario_id = 1
+        precio = data['external_reference']
         
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
-            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario)
+            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, precio=int(precio))
             serializer = self.get_serializer(transaccion)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
