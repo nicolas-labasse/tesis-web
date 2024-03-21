@@ -7,7 +7,6 @@ from transaccion.api.serializers import TransaccionSerializer
 from transaccion.models import Transaccion
 from django.shortcuts import get_object_or_404
 from usuario.models import Usuario
-from rest_framework.renderers import JSONRenderer
 
 
 class TransaccionApiViewSet(ModelViewSet):
@@ -18,15 +17,15 @@ class TransaccionApiViewSet(ModelViewSet):
         data = request.data
         mp_id = data.get('id')
         usuario_id = 1
-        json_data = JSONRenderer().render(data)
+        json_data = data
 
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
-            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario)
+            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, json_data=json_data)
             serializer = self.get_serializer(transaccion)
-            return Response(f"Data: {json_data}",serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
-            return Response(f"Error: Se requiere ID de transacción y ID de usuario. Data: {json_data}", status=status.HTTP_400_BAD_REQUEST)
+            return Response(f"Error: Se requiere ID de transacción y ID de usuario.", status=status.HTTP_400_BAD_REQUEST)
         
         
 
