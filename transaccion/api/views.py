@@ -7,6 +7,10 @@ from transaccion.api.serializers import TransaccionSerializer
 from transaccion.models import Transaccion
 from django.shortcuts import get_object_or_404
 from usuario.models import Usuario
+import logging
+
+# Configura el logger
+logger = logging.getLogger(__name__)
 
 
 class TransaccionApiViewSet(ModelViewSet):
@@ -17,11 +21,14 @@ class TransaccionApiViewSet(ModelViewSet):
         data = request.data
         mp_id = data.get('id')
         usuario_id = 1
-        usuario_str = data.get('external_reference')
+        logger.warning(data,'json data')
+        logger.error(data,'json data')
+        logger.warning(data.get('id'),'mp_id')
+        logger.error(mp_id,'mp_id')
 
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
-            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, usuario_str=usuario_str)
+            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario)
             serializer = self.get_serializer(transaccion)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
