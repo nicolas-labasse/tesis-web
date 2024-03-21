@@ -18,7 +18,7 @@ class TransaccionApiViewSet(ModelViewSet):
         data = request.data
         mp_id = data.get('id')
         usuario_id = 1
-        precio = data.get('transaction_amount')
+        precio = data.get('external_reference')
 
 
         if mp_id and usuario_id:
