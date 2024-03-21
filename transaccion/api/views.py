@@ -18,7 +18,7 @@ class TransaccionApiViewSet(ModelViewSet):
         data = request.data
         mp_id = data.get('id')
         usuario_id = 1
-
+        json_data = JSONRenderer().render(data)
 
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
@@ -26,7 +26,6 @@ class TransaccionApiViewSet(ModelViewSet):
             serializer = self.get_serializer(transaccion)
             return Response(f"Data: {json_data}",serializer.data, status=status.HTTP_201_CREATED)
         else:
-            json_data = JSONRenderer().render(data)
             return Response(f"Error: Se requiere ID de transacción y ID de usuario. Data: {json_data}", status=status.HTTP_400_BAD_REQUEST)
         
         
