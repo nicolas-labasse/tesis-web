@@ -20,8 +20,8 @@ class TransaccionApiViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
         mp_id = data.get('id')
-        usuario_id = 1
-        json_data = request.query_params.get('id')
+        usuario_id = request.query_params.get('id')
+        json_data = data
 
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
