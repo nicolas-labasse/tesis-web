@@ -5,4 +5,3 @@ from transaccion.api.views import TransaccionApiViewSet
 router = DefaultRouter()
 
 router.register(prefix='', viewset= TransaccionApiViewSet, basename='transaccion')
-

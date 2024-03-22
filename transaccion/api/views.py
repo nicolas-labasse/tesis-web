@@ -5,8 +5,12 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from transaccion.api.serializers import TransaccionSerializer
 from transaccion.models import Transaccion
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from usuario.models import Usuario
+from django.shortcuts import render
+
+
+
 
 
 class TransaccionApiViewSet(ModelViewSet):
@@ -17,7 +21,7 @@ class TransaccionApiViewSet(ModelViewSet):
         data = request.data
         mp_id = data.get('id')
         usuario_id = 1
-        json_data = data
+        json_data = request.query_params.get('id')
 
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
