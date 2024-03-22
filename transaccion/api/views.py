@@ -19,7 +19,7 @@ class TransaccionApiViewSet(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data
-        mp_id = data['id']
+        mp_id = data['data']['id']
         usuario_id = request.query_params.get('id')
         json_data = data
 
