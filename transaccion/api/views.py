@@ -1,4 +1,5 @@
 import json
+from django.conf import settings
 import requests
 from rest_framework import status
 from rest_framework.response import Response
@@ -22,14 +23,29 @@ class TransaccionApiViewSet(ModelViewSet):
         mp_id = data['data']['id']
         usuario_id = request.query_params.get('id')
         json_data = data
-
+        precio = webHookTransaccion(mp_id)
         if mp_id and usuario_id:
             usuario = get_object_or_404(Usuario, id=usuario_id)
-            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, json_data=json_data)
+            transaccion = Transaccion.objects.create(mp_id=mp_id, usuario=usuario, json_data=json_data , precio=precio)
             serializer = self.get_serializer(transaccion)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(f"Error: Se requiere ID de transacción y ID de usuario.", status=status.HTTP_400_BAD_REQUEST)
+
+
+def webHookTransaccion(mp_id):
+    url = f'https://api.mercadopago.com/v1/payments/{mp_id}'
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {settings.MERCADO_PAGO_ACCESS_TOKEN}'
+    }
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        transaccion = response.json()
+        total_paid_amount = transaccion['transaction_details']['total_paid_amount']
+        return total_paid_amount
+    else:
+        return None
         
         
 
