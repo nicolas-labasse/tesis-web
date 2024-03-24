@@ -4,7 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 from usuario.models import Usuario
 from usuario.api.serializers import UsuarioSerializer, UsuarioFavoritoSerializer, EditarImagenUsuarioSerializer, EditarUsuarioNombreSerializer
 
-class UsuarioApiViewSet(ModelViewSet):
+"""class UsuarioApiViewSet(ModelViewSet):
     serializer_class = UsuarioSerializer
     queryset = Usuario.objects.all()
 
@@ -15,8 +15,23 @@ class UsuarioApiViewSet(ModelViewSet):
         self.perform_create(serializer)
 
         headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)"""
 
+class UsuarioApiViewSet(ModelViewSet):
+    serializer_class = UsuarioSerializer
+    queryset = Usuario.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        try:
+            data = request.data
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            print('Exception:', e)
+            return Response({'error': 'Error interno del servidor no entre al try'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class UsuarioFavoritoAPIView(ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioFavoritoSerializer
