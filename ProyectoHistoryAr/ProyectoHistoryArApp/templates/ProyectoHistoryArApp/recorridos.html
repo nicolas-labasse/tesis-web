@@ -1,0 +1,102 @@
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+
+{% block contenidoPagina %}
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+<div class="container mt-5">
+
+    <h1 class="fw-bold text-white h3">Recorridos</h1>
+    
+    <div class="d-flex row justify-content-between">
+      <div class="col-md-6 col-12">
+            <div class="btn-group" >
+                <a href="{% url 'crear_recorrido' %}" class="btn btn-primary active"  data-mdb-ripple-init>Nuevo recorrido</a>
+                <a href="{% url 'crear_recorrido' %}" class="btn btn-primary"  data-mdb-ripple-init>+</a>
+            </div>
+        </div>
+        <div class="col-md-6 col-12 mb-4">
+          <form method="GET" enctype="multipart/form-data">
+              
+              <div class="input-group justify-content-md-end">
+                  <div class="form-outline">
+                      <input type="search" id="buscar" name="buscar" class="form-control"
+                          placeholder="Buscar" />
+                  </div>
+                  <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-search"></i>
+                  </button>
+              </div>
+          </form>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        
+        <div class="col table-responsive-lg">
+            <table class="table align-middle mb-0 bg-white">
+                <thead class="bg-light">
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Duracion</th>
+                    <th>Descripcion</th>
+                    <th class="d-none d-md-block">Puntos de Interes</th>
+                    <th class="d-block d-md-none" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Puntos de interes">P.Interes</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for recorrido in recorridos %}
+                  {% if recorrido.activo %}
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <div class="ms-3">
+                          <p class="fw-bold mb-1">{{recorrido.nombre|capfirst}}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <p class="fw-normal mb-1">{{recorrido.duracion}}</p>
+                    </td>
+                    <td>
+                      <p class="fw-normal mb-1">{{recorrido.descripcion|slice:"0:30" }}...</p>
+                    </td>
+                    <td>
+                      <div>
+                        {% for punto in recorrido.puntoInteres %}
+                        {% if forloop.counter0|divisibleby:2 and not forloop.first %}
+                        <p>
+                        {% endif %}
+                        {{ punto.nombre|capfirst }},
+                        {% endfor %}
+                        </p>
+                      </div>
+                    </td>
+                    <td>
+                      <a href="{% url 'detalle_recorrido' recorrido.id %}" data-mdb-toggle="tooltip" data-mdb-placement="top" title="ver recorrido"><i style="color:blue"
+                        class="fa-solid fa-eye"></i></a>
+                      <a href="{% url 'editar_recorrido'  recorrido.id  %}" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Editar recorrido"><i style="color:green"
+                              class="fa-solid fa-pencil"></i></a>
+                      <a href="{% url 'eliminar_recorrido' recorrido.id %}" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Eliminar recorrido"><i style="color:red"
+                              class="fa-solid fa-trash-can"></i></a>
+                  </td>
+                  </tr>
+                  {% endif %}
+                  {% endfor %}
+                </tbody>
+            </table>
+            <div class="m-5">
+              {% include 'ProyectoHistoryArApp/paginator.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

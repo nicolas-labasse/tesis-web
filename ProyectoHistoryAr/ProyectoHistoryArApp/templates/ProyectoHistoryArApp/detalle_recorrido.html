@@ -1,0 +1,62 @@
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+{% block contenidoPagina %}
+
+<div class="container mt-5">
+    <h1 class="fw-bold text-white h3 text-center mb-3">Detalle Recorrido</h1>
+
+    <div class="d-flex row justify-content-center">
+        <div class="col-12 col-lg-8 col-xl-6 rounded mb-4">
+            <div class="card text-center">
+                <div class="card-header fw-bold">
+                  {{recorrido.nombre|capfirst}}
+                </div>
+                <div class="card-body">
+                  <div class="container">
+                    <div class="row">
+                        <div class="col-5 col-lg-4 col-xl-3 text-start">
+                            <h5 class="card-title">Duracion:</h5>
+                        </div>
+                        <div class="col-7 col-lg-8 col-xl-9 text-start">
+                            <p class="card-title">{{recorrido.duracion}}</p>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                          <hr class="mt-3 text-success" style="height: 3px;width: 50%;opacity: 1;">
+                        </div>
+                        <div class="col-12 col-lg-4 col-xl-3 text-start">
+                            <h6 class="card-title">Descripcion:</h6>
+                        </div>
+                        <div class="col-12 text-start">
+                            <p class="card-title">{{recorrido.descripcion}}</p>
+                        </div>
+                        <div class="col-12 justify-content-center d-flex">
+                          <hr class="mt-3 text-success" style="height: 3px;width: 50%;opacity: 1;">
+                      </div>
+                        <div class="col-9 text-start">
+                            <h6 class="card-title">Punto de Interes:</h6>
+                        </div>
+                        {% for punto in recorrido.puntoInteres %}
+                        <div class="d-flex align-items-center mt-2">
+                            <img
+                                src="{{punto.imagen}}"
+                                alt="Imagen del punto de interes {{punto.nombre}}"
+                                style="width: 45px; height: 45px"
+                                />
+                            <div class="ms-3">
+                              <p class="fw-bold mb-1 text-start">{{punto.nombre}}</p>
+                              <div class="d-flex">
+                              <p class="mb-0"><span class="fw-bold">Latitud:</span> {{punto.latitud}} </p>
+                              <p class="mb-0 ms-2"><span class="fw-bold">Longitud:</span> {{punto.longitud}}</p>
+                              </div>
+                            </div>
+                          </div>
+                        {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

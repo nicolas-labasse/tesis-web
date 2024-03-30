@@ -1,0 +1,70 @@
+
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+
+{% block contenidoPagina %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center" style="height: 80vh;">
+        <div class="col-12 col-md-10 col-lg-8 col-xl-6">
+            <h1 class="h3 text-white mb-4 text-center mt-4">Mi Suscripción</h1>
+            <div class="card p-3 shadow-custom">
+                <div class="card-body">
+                  <h5 class="card-title">Suscripción Mensual de Recorridos Turísticos Ilimitados</h5>
+                  {% if suscripcione_valida %}
+                  {% for transaccion in transacciones %}
+                  <h6 class="card-subtitle my-2">Fecha de expiracion: {{fecha_expiracion}}</h6>
+                  <h6 class="card-subtitle my-2">Precio: us$ {{transaccion.precio}}</h6>
+                    {% endfor %}
+                    {% else %}
+                    <h6 class="card-subtitle my-2">Fecha de expiracion: No tienes una suscripción activa</h6>
+                    <h6 class="card-subtitle my-2">Precio: us$ 0.00</h6>
+                    {% endif %}
+                  <div class="container-fluid">
+                    <div class="row justify-content-center align-items-center my-5">
+                      <div class="col-12 col-md-10 col-lg-6 text-center">
+                          {% if suscripcione_valida %}
+                          <a href="{{ init_point }}" class="btn btn-outline-dark" style="width: 100%">Renovar</a>
+                          {% else %}
+                          <a href="{{ init_point }}" class="btn btn-outline-dark" style="width: 100%">Suscribirse</a>
+                          {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                  <p id="terminos" class="card-text text-muted mt-5 mb-2" style="font-size: 12px;">
+                    <span id="texto_truncado">{{ terminos_condiciones|slice:":200" }}</span>
+                    <span id="terminos_btn" style="cursor: pointer;" class="text-naranja" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Ver más información">
+                        ...ver más
+                    </span>
+                  </p>
+                </div>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+  var terminos_condiciones = "{{ terminos_condiciones }}";
+  var isExpanded = false;
+
+  function toggleText() {
+      var text1 = document.getElementById('terminos');
+      var textTruncado = document.getElementById('texto_truncado');
+      var btn1 = document.getElementById('terminos_btn');
+
+      if (isExpanded) {
+          textTruncado.textContent = terminos_condiciones.slice(0, 200) +' ';
+          btn1.textContent = "...ver más";
+          isExpanded = false;
+      } else {
+          textTruncado.textContent = terminos_condiciones;
+          btn1.textContent = "ver menos";
+          isExpanded = true;
+      }
+  }
+
+  document.getElementById('terminos_btn').addEventListener('click', toggleText);
+</script>
+
+{% endblock %}

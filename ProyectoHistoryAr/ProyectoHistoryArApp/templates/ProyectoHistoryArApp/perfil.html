@@ -1,0 +1,115 @@
+
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block contenidoPagina %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center" style="height: 80vh;">
+        <div class="col-12 col-md-8 col-lg-6">
+            <h1 class="h3 text-white mb-5 text-start mt-3">Mi Perfil</h1>
+            <div class="card p-3 shadow-custom">
+                    <div class="card-body">
+                        <div class="container-fluid profile-img">
+                            <div class="row justify-content-center text-center">
+                                <div class="col-8 col-6-md text-center" style="justify-content: center;display: flex;">
+                                    <div class="card bg-dark text-white rounded-circle profile-img medida-imagen">
+                                        <img src="{{imagen_usuario}}" class="rounded-circle" alt="Foto de perfil del usuario" >
+                                        <form id="imagenForm" action="{% url 'editar_imagen_perfil' %}" method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                            <div class="card-img-overlay-rounded">
+                                                <label for="imagen_update" class="close-icon h1">
+                                                    <i class="fa-solid fa-camera"></i>
+                                                </label>
+                                                <input type="file" name="imagen_update" id="imagen_update" style="display: none;" onchange="submitForm()">
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12 p-0">
+                                        <p><span class="fw-bold p-4">Email:</span> <span>{{usuario.email}}</span></p>
+                                    </div>
+                                    <div class="col-12">
+                                        <form id="nombreForm" action="{% url 'perfil' request.user.id %}" method="POST" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="input-group " style="align-items: baseline;">
+                                            <span class="input-group-text fw-bold "  style="background-color: transparent; 
+                                            border: 0px;
+                                            border-radius: 0;">Nombre:</span>
+                                            {{form.nombre|as_crispy_field}}
+                                        </div>
+                                        </form>
+                                    </div>
+                                    <div class="col-12 p-0">
+                                        <p><span class="fw-bold p-4">Ultimo recorrido:</span> <span>{{usuario.ultimosRecorridos|capfirst}}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        {% if usuario.recorridoFavorito != None %}
+                        <div class="container-fluid">
+                            <div class="row justify-content-center">
+                                <div class="col-10 mt-5">
+                                    <a href="{% url 'eliminar_favorito'  %}">
+                                        <div class="card-wrapper">
+                                            <div class="card bg-dark text-white">
+                                                {% for punto in recorrido.puntoInteres %}
+                                                    {% if forloop.first %}
+                                                    <img src="{{imagen_url.imagen}}" class="card-img" alt="Imagen del recorrido favorito del usuario"/>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <div class="card-img-overlay">
+                                                    <div class="container-fluid">
+                                                        <div class="row justify-content-center" >
+                                                            <div class="col-12" style="justify-content: end;display: flex;">
+                                                                <i class="fa-solid fa-star" style="color: #c6c81a;"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="container-fluid">
+                                                        <div class="row justify-content-center" >
+                                                            <div class="col-12" >
+                                                                <h1 class="close-icon h1"><i class="fa-solid fa-circle-xmark"></i></h1>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function submitForm() {
+        document.getElementById('imagenForm').submit();
+    }
+
+    function submitFormNombre() {
+        document.getElementById('nombreForm').submit();
+    }
+
+    $(document).ready(function () {
+        $('.close-icon').click(function () {
+            $('#imagen_update').click();
+        });
+    });
+</script>
+
+
+{% endblock %}

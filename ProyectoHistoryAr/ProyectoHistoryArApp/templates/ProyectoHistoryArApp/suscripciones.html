@@ -1,0 +1,229 @@
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block contenidoPagina %}
+
+<!--Section Modificado-->
+
+<!--Section Card-->
+<section>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col p-0">
+        <div class="card bg-dark text-white">
+          <div class="card-img fondo-suscripcion">
+          </div>
+          <div class="card-img-overlay">
+            <div class="container">
+              <div class="row justify-content-center align-items-center contenedor-custom">
+                <div class="col text-center">
+                  <p class="fw-bold mb-0">¡Únete Hoy y Empieza Tu Viaje en el Tiempo!</p>
+                  <p class="fw-bold">Se tu propio guía. Viví la historia desde dentro con realidad aumentada.</p>
+                  {% if user.is_authenticated %}
+                  <a href="{{ init_point }}"" class="btn btn-outline-light btn-lg mt-2">Suscribite</a>
+                  {% else %}
+                  <button type="button" class="btn btn-outline-light btn-lg mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    Suscribite
+                  </button>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--Fin Section Card-->
+
+<!--Section Suscripcion-->
+<section>
+  <div class="container-fluid text-white ">
+    <div class="row align-items-center m-0 justify-content-center justify-content-lg-start">
+      <div class="col-12 col-lg-6 p-0 pt-4">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col text-sm-start text-md-center">
+              <h1>Suscripciones</h1>
+              <p >¿En qué consiste nuestra Suscripción Mensual de Recorridos?<br>
+                Nuestra suscripción te brinda acceso ilimitado a una variedad de recorridos emocionantes y experiencias únicas durante el mes que hayas pagado.Imagina pasear por pintorescas calles históricas, adentrarte en la naturaleza en su máximo esplendor, sumergirte en la rica cultura local y deleitarte con los sabores auténticos de cada región. Cada mes te llevaremos a un nuevo destino, ofreciéndote la oportunidad de vivir momentos inolvidables.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6 d-none d-lg-block">
+        <img src="../../../media/images/mobile-sus.png" class="img-fluid" style="opacity: 0.80;" alt="Captura de pantalla de la función 'Suscripción' en la aplicación móvil">
+      </div>
+      <div class="col-8 col-lg-6 ">
+        <hr class="hr-custom">
+      </div>
+      <div class="col-12 col-md-7 container-fluid pt-5">
+        <div class="row justify-content-center">
+          <div class="col text-center">
+            <h1 class="h2">Ventajas de Nuestra Suscripción</h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 pt-5 text-dark pb-5">
+        <div class="row row-cols-1 row-cols-md-3 g-2 justify-content-evenly">
+          <div class="col-12 col-md-4 col-xl-3" >
+            <div class="card h-100 shadow-custom">
+              <img src="../../../media/images/piramide.jpg" class="card-img-top" alt="Imagen de una pirámide en Realidad Aumentada"/>
+              <div class="card-body pb-0">
+                <hr class="hr-custom" style="width: 50%;">
+                <h5 class="card-title">Realidad Aumentada</h5>
+                <p id="text1" class="card-text">{{ card_1|truncatechars:100 }}</p>
+                <span id="vermas1" class="text-naranja" style="cursor: pointer;">Ver más</span>
+              </div>
+              {% if user.is_authenticated %}
+              <a href="{{ init_point }}" class="btn btn-outline-success card-footer" style="margin: 5px;">Suscribite</a>
+              {% else %}
+              <a  class="btn btn-outline-success card-footer" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin: 5px;">Suscribite</a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-12 col-md-4 col-xl-3 " >
+            <div class="card h-100 shadow-custom">
+              <img src="../../../media/images/dispositivos.jpg" class="card-img-top" alt="Imagen de varios dispositivos tecnologicos"/>
+              <div class="card-body pb-0">
+                <hr class="hr-custom" style="width: 50%;">
+                <h5 class="card-title">Renovación Flexible</h5>
+                <p id="text2" class="card-text">{{ card_2|truncatechars:100 }}</p>
+                <span id="vermas2" class="text-naranja" style="cursor: pointer;" >Ver más</span>
+              </div>
+              {% if user.is_authenticated %}
+              <a href="{{ init_point }}" class="btn btn-outline-success card-footer" style="margin: 5px;">Suscribite</a>
+              {% else %}
+              <a href="" class="btn btn-outline-success card-footer" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin: 5px;">Suscribite</a>
+              {% endif %}
+            </div>
+          </div>
+          <div class="col-12 col-md-4 col-xl-3" >
+            <div class="card h-100 shadow-custom">
+              <img src="../../../media/images/1.png" class="card-img-top" alt="imagen mostrando algunos de los monumentos mas reconocidos en el mundo"/>
+              <div class="card-body pb-0">
+                <hr class="hr-custom" style="width: 50%;">
+                <h5 class="card-title">Diversidad de Puntos de Interés</h5>
+                <p id="text3" class="card-text">{{ card_3|truncatechars:100 }}</p>
+                <span id="vermas3" class="text-naranja" style="cursor: pointer;">Ver más</span>
+              </div>
+              {% if user.is_authenticated %}
+              <a href="{{ init_point }}" class="btn btn-outline-success card-footer" style="margin: 5px;">Suscribite</a>
+              {% else %}
+              <a href="" class="btn btn-outline-success card-footer" data-bs-toggle="modal" data-bs-target="#exampleModal" style="margin: 5px;">Suscribite</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</section>
+
+<!--Fin Section Suscripcion-->
+
+
+<!--Inicio Modal Login-->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+        <div class="modal-body">
+          <div class="container" >
+            <div class="row d-flex align-items-center justify-content-center" style="height: 100%;">
+                <div class="col-12 ">
+                        <div class="col-8" style="align-items: center;display: contents;">
+                            <img src="../../../media/images/logo.png" class="img-fluid" alt="">
+                        </div>
+                        <div class="card-body">
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                {{formLogin|crispy}}
+                                <div class="text-center py-5">
+                                    <input type="submit" class="btn btn-primary" value="Login" style="width: 80%;"
+                                        tabindex="-1">
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!--Fin Modal Login-->
+<!--Fin Section Modificado-->
+
+<script>
+  var card1 = "{{ card_1 }}";
+  var isExpanded1 = false;
+
+  function toggleText1() {
+      var text1 = document.getElementById('text1');
+      var btn1 = document.getElementById('vermas1');
+
+      if (isExpanded1) {
+          text1.innerHTML = "{{ card_1|truncatechars:100 }}";
+          btn1.textContent = "Ver más";
+          isExpanded1 = false;
+      } else {
+          text1.innerHTML = card1;
+          btn1.textContent = "Ver menos";
+          isExpanded1 = true;
+      }
+  }
+
+  document.getElementById('vermas1').addEventListener('click', toggleText1);
+
+
+  var card2 = "{{ card_2 }}";
+  var isExpanded2 = false;
+
+  function toggleText2() {
+      var text2 = document.getElementById('text2');
+      var btn2 = document.getElementById('vermas2');
+
+      if (isExpanded2) {
+          text2.innerHTML = "{{ card_2|truncatechars:100 }}";
+          btn2.textContent = "Ver más";
+          isExpanded2 = false;
+      } else {
+          text2.innerHTML = card2;
+          btn2.textContent = "Ver menos";
+          isExpanded2 = true;
+      }
+  }
+
+  document.getElementById('vermas2').addEventListener('click', toggleText2);
+
+  var card3 = "{{ card_3 }}";
+  var isExpanded3 = false;
+
+  function toggleText3() {
+      var text3 = document.getElementById('text3');
+      var btn3 = document.getElementById('vermas3');
+
+      if (isExpanded3) {
+          text3.innerHTML = "{{ card_3|truncatechars:100 }}";
+          btn3.textContent = "Ver más";
+          isExpanded3 = false;
+      } else {
+          text3.innerHTML = card3;
+          btn3.textContent = "Ver menos";
+          isExpanded3 = true;
+      }
+  }
+
+  document.getElementById('vermas3').addEventListener('click', toggleText3);
+
+</script>
+
+{% endblock %}

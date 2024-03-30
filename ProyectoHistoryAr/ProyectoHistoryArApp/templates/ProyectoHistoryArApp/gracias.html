@@ -1,0 +1,47 @@
+
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+
+{% block contenidoPagina %}
+
+<section>
+    <div class="container py-5 px-md-5">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-12 col-md-8">
+                <div class="card text-center p-5 shadow-lg">
+                    <div class="card-body">
+                        <div class="container">
+                           <div class="row">
+                            <div class="col-12">
+                                <a class="navbar-brand d-flex align-items-center m-0 m-md-1 justify-content-center justify-content-lg-start" href="{% url 'home' %}">
+                                    <img src="../../../media/images/historyAr-Negro.png" alt="logo de HistoryAr" width="120"
+                                        height="90">
+                                    <h1 class="h6 d-none d-lg-block">HistoryAr</h1>
+                                </a>
+                            </div>
+                           </div>
+                        </div>
+                        
+                        <h5 class="card-title mt-5">Muchas gracias por ponerte en contacto con nosotros!, a la brevedad nos
+                            pondremos en contacto con usted vía email.</h5>
+                        <a href="{% url 'home' %}" class="btn btn-outline-dark  px-5 mt-4">Volver Inicio</a>
+                        <div class="col d-flex justify-content-center mt-5">
+                            <a href=""><i class="fa-brands fa-instagram-square h2 text-instagram"></i>
+                            </a>
+                            <a href="">
+                              <i class="fa-brands fa-facebook-square ms-5 h2 text-facebook"></i>
+                            </a>
+                            <a href="">
+                              <i class="fa-brands fa-youtube ms-5 h2 text-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+{% endblock %}

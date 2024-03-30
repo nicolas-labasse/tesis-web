@@ -1,0 +1,312 @@
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block contenidoPagina %}
+
+<section>
+    <div class="container-fluid">
+        <div class="row justify-content-center mt-md-3">
+            <div class="col-12 col-md-10 p-0">
+                <div class="card bg-dark text-white">
+                    {% for punto in recorrido.puntoInteres %}
+                        {% if forloop.first %}
+                            <img src="{{punto.imagen}}" class="card-img" alt="Imagen que muestra una de los puntos de interes del recorrido" style="max-height: 300px;">
+                            <div class="card-img-overlay" 
+                            style="
+                                background-image: linear-gradient(45deg, rgba(8, 8, 8, 0.067),rgba(78, 78, 78, 0.221)),url({{punto.imagen}})!important;
+                                background-repeat: no-repeat;
+                                background-position: center;
+                                background-size: cover;
+                            ">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="container-fluid">
+                    <div class="row text-white mt-5">
+                        <div class="col-12 col-md-6">
+                            <h2>Recorrido {{recorrido.nombre|capfirst}}</h2>
+                            <div class="col-12 col-md-6 d-md-none">
+                                <h2>Duracion: {{recorrido.duracion}}</h2>
+                            </div>
+                            <div class="d-flex h4 mt-md-4">
+                                <a type="button" class="btn text-white text-center" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: contents;">
+                                    <span id="stars-container">
+                                        <i class="fa-regular fa-star"></i>
+                                        <i class="fa-regular fa-star"></i>
+                                        <i class="fa-regular fa-star"></i>
+                                        <i class="fa-regular fa-star"></i>
+                                        <i class="fa-regular fa-star"></i>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 d-none d-md-block text-end">
+                            <h2>Duracion: {{recorrido.duracion}}</h2>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <p class="d-none d-md-block">
+                                {{recorrido.descripcion}}
+                            </p>
+                            <p id="terminos" class="d-md-none">
+                                <span id="texto_truncado">{{recorrido.descripcion|slice:":180" }}</span>
+                                <span id="terminos_btn" style="cursor: pointer;" class="text-naranja" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Ver más información">
+                                    ...ver más
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-12 my-5">
+                            <div class="d-flex" style="align-items: center;">
+                                <h1>Comentarios</h1>
+                                <h5 class="mb-0" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Recorda que todos los comentarios son publicos y contienen tu informacion personal."><i class="fa-solid fa-circle-exclamation ms-4" style="color: #ffffff;"></i></h5>
+                            </div>
+                            
+                            {% for calificacion in calificaciones %}
+                            <div class="d-flex align-items-start mt-4">
+                                {% for usuario in usuarios %}
+                                    {% if calificacion.usuario == usuario.id %}
+                                        <div class="me-3">
+                                            <img src="{{usuario.imagen}}" alt="Foto de perfil del usuario" style="width: 45px; height: 45px" class="rounded-circle">
+                                        </div>
+                                        <div>
+                                            <div class="p-0">
+                                                {% for i in calificacion.stars_range %}
+                                                    <i class="fas fa-star fa-xs"></i>
+                                                {% endfor %}
+                                                {% for i in 5|add:"-calificacion.puntuacion" %}
+                                                    <i class="far fa-star fa-xs"></i>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                {% for usuario in usuarios %}
+                                                    {% if calificacion.usuario == usuario.id %}
+                                                        <p class="fw-bold mb-0">{{usuario.nombre}}</p>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <p class="text-muted ms-3 mb-0">{{calificacion.fecha_creacion|slice:":10"}}</p>
+                                            </div>
+                                            <p id="comentario" class="mb-0 d-lg-none">
+                                                <span id="texto_comentario_{{usuario.id}}">
+                                                    {% if calificacion.comentario|length <= 100 %}
+                                                        {{ calificacion.comentario }}
+                                                    {% else %}
+                                                        {{ calificacion.comentario|slice:":100" }}
+                                                    {% endif %}
+                                                </span>
+                                                {% if calificacion.comentario|length > 100 %}
+                                                    <span id="comentario_btn_{{usuario.id}}" style="cursor: pointer;" class="text-naranja" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Ver más información" onclick="expandirComentarios('{{usuario.id}}','sm')">
+                                                        ...ver más
+                                                    </span>
+                                                {% endif %}
+                                            </p>
+                                            <p  class="mb-0 d-none d-lg-block">
+                                                <span id="texto_comentario_lg_{{usuario.id}}">
+                                                    {% if calificacion.comentario|length <= 1000 %}
+                                                        {{ calificacion.comentario }}
+                                                    {% else %}
+                                                        {{ calificacion.comentario|slice:":500" }}
+                                                    {% endif %}
+                                                </span>
+                                                {% if calificacion.comentario|length > 1000 %}
+                                                    <span id="comentario_btn_lg_{{usuario.id}}" style="cursor: pointer;" class="text-naranja" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Ver más información" onclick="expandirComentarios('{{usuario.id}}', 'lg')">
+                                                        ...ver más
+                                                    </span>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <p id="texto_comentario" class="mb-0"></p>
+
+</section>
+
+
+
+<!--Inicio Modal-->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            {% if request.user.is_authenticated %}
+            <div class="ms-1">
+                {% if imagen_perfil %}
+                    <img src="{{imagen_perfil}}" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                {% else %}
+                    <img src="/media/images/user.png" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                {% endif %}
+                <span>{{ nombre_usuario }}</span>
+                <div class="container ms-2">
+                    <div class="row">
+                        <div class="col-12 ms-4 p-0 p-sm-3">
+                            <p class="text-muted">Las opiniones son publicas y contienen información de tu cuenta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+            <form id="miFormulario" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="d-flex h4 mt-4 text-center justify-content-center">
+                            <i class="fa-regular fa-star star-modal" id="star1"></i>
+                            <i class="fa-regular fa-star star-modal" id="star2"></i>
+                            <i class="fa-regular fa-star star-modal" id="star3"></i>
+                            <i class="fa-regular fa-star star-modal" id="star4"></i>
+                            <i class="fa-regular fa-star star-modal" id="star5"></i>
+                </div>
+                    {{ form.comentario|as_crispy_field }}
+                    {{ form.usuario|as_crispy_field }}
+                    {{ form.recorrido|as_crispy_field }}
+                    {{ form.puntuacion|as_crispy_field }}
+                </div>
+                <div class="modal-footer">
+                   <input type="submit" class="btn btn-primary" 
+                value="Calificar">
+                </div>
+            </form>
+      </div>
+    </div>
+  </div>
+<!--Fin Modal-->
+
+
+<script>
+const stars = document.querySelectorAll('.star-modal');
+const puntuacionInput = document.getElementById('puntuacion');
+
+var puntuacion_form = parseInt("{{ form.initial.puntuacion }}");
+
+if (!isNaN(puntuacion_form)) {
+    stars.forEach((star, index) => {
+        if (index < puntuacion_form) {
+            star.classList.add('fas'); 
+            star.classList.add('fa-yellow'); 
+            star.classList.remove('far');
+        } else {
+            star.classList.remove('fas'); 
+            star.classList.remove('fa-yellow');
+            star.classList.add('far');
+        }
+
+        star.addEventListener('click', () => {
+            stars.forEach((star, i) => {
+                star.classList.remove('fas'); 
+                star.classList.remove('fa-yellow');
+                star.classList.add('far'); 
+            });
+
+            for (let i = 0; i <= index; i++) {
+                stars[i].classList.add('fas'); 
+                stars[i].classList.add('fa-yellow'); 
+                stars[i].classList.remove('far');
+            }
+
+            puntuacionInput.value = index + 1;
+        });
+    });
+} else {
+    stars.forEach((star, index) => {
+        star.addEventListener('click', () => {
+            stars.forEach((star, i) => {
+                star.classList.remove('fas'); 
+                star.classList.remove('fa-yellow');
+                star.classList.add('far'); 
+            });
+
+            for (let i = 0; i <= index; i++) {
+                stars[i].classList.add('fas'); 
+                stars[i].classList.add('fa-yellow'); 
+                stars[i].classList.remove('far');
+            }
+
+            puntuacionInput.value = index + 1;
+        });
+    });
+    
+}
+
+
+function updateStars(puntuacion) {
+    var starsContainer = document.getElementById('stars-container');
+    var stars = starsContainer.getElementsByTagName('i');
+
+    puntuacion = parseInt(puntuacion);
+
+    for (var i = 0; i < stars.length; i++) {
+        if (i < puntuacion) {
+            stars[i].classList.remove('fa-regular');
+            stars[i].classList.add('fa-solid');
+        } else {
+            stars[i].classList.remove('fa-solid');
+            stars[i].classList.add('fa-regular');
+        }
+    }
+}
+
+var puntuacion = "{{ puntuacion }}";
+updateStars(puntuacion);
+
+
+var terminos_condiciones = "{{ recorrido.descripcion }}";
+var isExpanded1 = false;
+
+function toggleText() {
+    var textTruncado = document.getElementById('texto_truncado');
+    var btn1 = document.getElementById('terminos_btn');
+
+    if (isExpanded1) {
+        textTruncado.textContent = terminos_condiciones.slice(0, 180) + '...';
+        btn1.textContent = "...ver más";
+        isExpanded1 = false;
+    } else {
+        textTruncado.textContent = terminos_condiciones;
+        btn1.textContent = "ver menos";
+        isExpanded1 = true;
+    }
+}
+
+document.getElementById('terminos_btn').addEventListener('click', toggleText);
+
+
+var calificaciones = JSON.parse('{{ comentario_json|escapejs }}');
+
+var isExpanded = {};
+
+function expandirComentarios(usuario_id,tipo) {
+    calificaciones.forEach(comentario => {
+        if (comentario.usuario == usuario_id && comentario.recorrido == "{{ recorrido.id }}") {
+            if (tipo == 'lg') {
+                var textoComentario = document.getElementById('texto_comentario_lg_'+ usuario_id );
+                var btn = document.getElementById('comentario_btn_lg_' + usuario_id);
+            } else {
+                var textoComentario = document.getElementById('texto_comentario_'+ usuario_id );
+                var btn = document.getElementById('comentario_btn_' + usuario_id);
+            }
+
+            if (!isExpanded[usuario_id]) {
+                textoComentario.textContent = comentario.comentario;
+                btn.textContent = "ver menos";
+                isExpanded[usuario_id] = true;
+            } else {
+                textoComentario.textContent = comentario.comentario.slice(0, 100) + '...';
+                btn.textContent = "...ver más";
+                isExpanded[usuario_id] = false;
+            }
+        }
+    });
+}
+
+
+</script>
+{% endblock %}

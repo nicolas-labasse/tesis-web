@@ -1,0 +1,153 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="">
+    <meta name="copyright" content="Copyright © Tour en Buenos Aires.com">
+    <meta name="robots" content="home">
+    <!-- links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="{% static 'ProyectoHistoryArApp/css/styles.css' %}" rel="stylesheet" />
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.min.js"></script>
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@700&family=Roboto:wght@100;400&display=swap" rel="stylesheet">
+
+    <!-- scripts -->
+    <script src="https://kit.fontawesome.com/f28549af1d.js" crossorigin="anonymous"></script>
+
+
+    <title>HistoryAr</title>
+
+</head>
+
+<body style="background-color: #272727;">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <img
+                  src="../../../media/images/logo.png"
+                  class="me-2"
+                  height="60"
+                  alt="HistoryAr logo"
+                  loading="lazy"
+                />
+                <small>HisotryAr</small>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent" style="justify-content: center;">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    {% if request.user.is_authenticated %}
+                    <li class="d-block d-lg-none">
+                        <div class="btn-group dropend">
+                            <button type="button" class="btn  btn-sm " data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="d-flex align-items-center">
+                                    {% if imagen_usuario %}
+                                        <img src="{{imagen_usuario}}" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                                    {% else %}
+                                        <img src="/media/images/user.png" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                                    {% endif %}
+                                    <div class="ms-3">
+                                      <p class="fw-bold mb-1">{{nombre_usuario}}</p>
+                                      parseInt
+                                    </div>
+                                </div>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'perfil' request.user.id %}">Perfil</a></li>
+                                {% if request.user.is_staff %}
+                                    <li><a class="dropdown-item" href="{% url 'panel_admin' %}">Panel Admin</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'suscripciones' %}">Mi Suscripcion</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'suscripciones' %}">Mi Suscripcion</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item" href="{% url 'account_logout' %}">Cerrar Sesion</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <hr class="hr-custom " style="width: 50%;">
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold {% if tab == 'home' %} active {% endif %}" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold {% if tab == 'recorrido' %} active {% endif %}" href="{% url 'recorrido' %}">Recorridos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold {% if tab == 'suscripciones' %} active {% endif %}" href="{% url 'suscribirse' %}">Suscripciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold" href="{% url 'contacto' %}">Contacto</a>
+                    </li>
+                    {% if request.user.is_authenticated == False %}
+                        <li class="nav-item d-block d-lg-none">
+                            <a class="btn text-start btn-outline-dark"  href="{% url 'account_login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="d-none d-lg-block">
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    {% if request.user.is_authenticated %}
+                        <div class="dropdown me-5">
+                            <button class="btn dropdown me-5" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if imagen_usuario %}
+                                    <img src="{{imagen_usuario}}" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                                {% else %}
+                                    <img src="/media/images/user.png" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                                {% endif %}
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <div class="ms-1">
+                                    {% if imagen_usuario %}
+                                        <img src="{{imagen_usuario}}" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                                    {% else %}
+                                        <img src="/media/images/user.png" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                                    {% endif %}
+                                    <span>{{ nombre_usuario|slice:":11" }}</span>
+                                </div>
+                            <hr>
+                            <li><a class="dropdown-item" href="{% url 'perfil' request.user.id %}">Perfil</a></li>
+                            {% if request.user.is_staff %}
+                                <li><a class="dropdown-item" href="{% url 'panel_admin' %}">Panel Admin</a></li>
+                                <li><a class="dropdown-item" href="{% url 'suscripciones' %}">Mi Suscripcion</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{% url 'suscripciones' %}">Mi Suscripcion</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'account_logout' %}">Cerrar Sesion</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <li class="nav-item me-5">
+                            <a class="btn btn-outline-dark" href="{% url 'account_login' %}">Login</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+
+    {% block contenidoPagina %}
+
+
+    {% endblock %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

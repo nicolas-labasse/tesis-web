@@ -1,0 +1,55 @@
+{% extends 'ProyectoHistoryArApp/header.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block contenidoPagina %}
+
+<div class="container-fluid mt-5">
+
+    <h1 class="fw-bold text-white h3">Panel de Administracion</h1>
+    {% if request.user.is_authenticated %}
+    <div class="row d-flex justify-content-center mx-auto mt-5">
+        <div class="col-12 col-md-3 text-center py-4 rounded" style="background-color: rgb(255, 255, 255);">
+            <a href="{% url 'usuarios' %}" class="fw-bold btn-custom">Usuarios</a>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center mx-auto mt-5">
+        <div class="col-12 col-md-3 text-center py-4 rounded" style="background-color: rgb(255, 255, 255);">
+            <a href="{% url 'recorridos' %}" class="fw-bold btn-custom">Recorridos</a>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center mx-auto mt-5">
+        <div class="col-12 col-md-3 text-center py-4 rounded" style="background-color: rgb(255, 255, 255);">
+            <a href="{% url 'puntos_interes' %}" class="fw-bold btn-custom">Puntos de Interes</a>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center mx-auto mt-5">
+        <div class="col-12 col-md-3 text-center py-4 rounded" style="background-color: rgb(255, 255, 255);">
+            <a href="{% url 'transacciones' %}" class="fw-bold btn-custom">Transacciones</a>
+        </div>
+    </div>
+    {% else %}
+    <div class="container" >
+        <div class="row d-flex align-items-center justify-content-center" style="height: 100%;">
+            <div class="col-12 col-md-8 col-lg-6 col-xl-4">
+                <div class="card shadow-lg">
+                    <div class="col-8" style="align-items: center;display: contents;">
+                        <img src="../../../media/images/logo.png" class="img-fluid" alt="">
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            {{form|crispy}}
+                            <div class="text-center py-5">
+                                <input type="submit" class="btn btn-primary" value="Login" style="width: 80%;"
+                                    tabindex="-1">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
