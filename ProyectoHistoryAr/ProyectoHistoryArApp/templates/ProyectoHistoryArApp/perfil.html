@@ -61,7 +61,7 @@
                                             <div class="card bg-dark text-white">
                                                 {% for punto in recorrido.puntoInteres %}
                                                     {% if forloop.first %}
-                                                    <img src="{{imagen_url.imagen}}" class="card-img" alt="Imagen del recorrido favorito del usuario"/>
+                                                    <img src="{{punto.imagen}}" class="card-img" alt="Imagen del recorrido favorito del usuario"/>
                                                     {% endif %}
                                                 {% endfor %}
                                                 <div class="card-img-overlay">

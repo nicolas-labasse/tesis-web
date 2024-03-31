@@ -1,8 +1,8 @@
 import requests
 
 
-BASE_URL = 'https://tesis-web.onrender.com/api/'
-"""BASE_URL = 'http://192.168.1.2:8081/api/'"""
+"""BASE_URL = 'https://tesis-web.onrender.com/api/'"""
+BASE_URL = 'http://192.168.1.2:8081/api/'
 
 
 def custom_context(request):

@@ -10,7 +10,7 @@
                 <div class="card bg-dark text-white">
                     {% for punto in recorrido.puntoInteres %}
                         {% if forloop.first %}
-                            <img src="{{punto.imagen}}" class="card-img" alt="Imagen que muestra una de los puntos de interes del recorrido" style="max-height: 300px;">
+                        <img src="{{punto.imagen}}" class="card-img" alt="Imagen que muestra una de los puntos de interes del recorrido" style="max-height: 300px;">
                             <div class="card-img-overlay" 
                             style="
                                 background-image: linear-gradient(45deg, rgba(8, 8, 8, 0.067),rgba(78, 78, 78, 0.221)),url({{punto.imagen}})!important;
@@ -140,8 +140,8 @@
         <div class="modal-body">
             {% if request.user.is_authenticated %}
             <div class="ms-1">
-                {% if imagen_perfil %}
-                    <img src="{{imagen_perfil}}" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
+                {% if imagen_usuario %}
+                    <img src="{{imagen_usuario}}" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
                 {% else %}
                     <img src="/media/images/user.png" class="rounded-circle" width="40" height="40" alt="Foto de perfil del usuario">
                 {% endif %}

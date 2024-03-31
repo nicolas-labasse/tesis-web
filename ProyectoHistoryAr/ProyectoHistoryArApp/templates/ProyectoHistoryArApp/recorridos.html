@@ -53,7 +53,6 @@
                 </thead>
                 <tbody>
                   {% for recorrido in recorridos %}
-                  {% if recorrido.activo %}
                   <tr>
                     <td>
                       <div class="d-flex align-items-center">
@@ -88,7 +87,6 @@
                               class="fa-solid fa-trash-can"></i></a>
                   </td>
                   </tr>
-                  {% endif %}
                   {% endfor %}
                 </tbody>
             </table>

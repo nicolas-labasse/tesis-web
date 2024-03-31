@@ -23,8 +23,8 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from django.core.mail import EmailMessage
 
-BASE_URL = 'https://tesis-web.onrender.com/api/'
-"""BASE_URL = 'http://192.168.1.2:8081/api/'"""
+"""BASE_URL = 'https://tesis-web.onrender.com/api/'"""
+BASE_URL = 'http://192.168.1.2:8081/api/'
 
 def contacto(request):
     tab = "#contacto"
@@ -854,6 +854,7 @@ def perfil(request,id):
     api_url = BASE_URL + 'usuario/' + 'usuarios/' + str(id) + '/'
     response = requests.get(api_url)
     usuario = response.json()
+    
     #Recorrido
     api_recorrido = BASE_URL + 'recorrido/'
     response_recorrido = requests.get(api_recorrido)

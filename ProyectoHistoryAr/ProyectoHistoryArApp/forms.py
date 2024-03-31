@@ -3,8 +3,8 @@ from .models import *
 import requests
 from django.utils.safestring import mark_safe
 
-BASE_URL = 'https://tesis-web.onrender.com/api/'
-"""BASE_URL = 'http://192.168.1.2:8081/api/'"""
+"""BASE_URL = 'https://tesis-web.onrender.com/api/'"""
+BASE_URL = 'http://192.168.1.2:8081/api/'
 
 
 class RecorridoApiForm(forms.ModelForm):
