@@ -31,13 +31,13 @@
                             </div>
                             <div class="d-flex h4 mt-md-4">
                                 <a type="button" class="btn text-white text-center" data-bs-toggle="modal" data-bs-target="#exampleModal" style="display: contents;">
-                                    <span id="stars-container">
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                        <i class="fa-regular fa-star"></i>
-                                    </span>
+                                        <span id="stars-container">
+                                            <i class="fa-regular fa-star"></i>
+                                            <i class="fa-regular fa-star"></i>
+                                            <i class="fa-regular fa-star"></i>
+                                            <i class="fa-regular fa-star"></i>
+                                            <i class="fa-regular fa-star"></i>
+                                        </span>
                                 </a>
                             </div>
                         </div>
@@ -129,7 +129,7 @@
 </section>
 
 
-
+{% if request.user.is_authenticated %}
 <!--Inicio Modal-->
   <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -179,7 +179,39 @@
     </div>
   </div>
 <!--Fin Modal-->
-
+{% else %}
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Login</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+          <div class="modal-body">
+            <div class="container" >
+              <div class="row d-flex align-items-center justify-content-center" style="height: 100%;">
+                  <div class="col-12 ">
+                          <div class="col-8" style="align-items: center;display: contents;">
+                              <img src="../../../media/images/logo.png" class="img-fluid" alt="">
+                          </div>
+                          <div class="card-body">
+                              <form action="" method="POST">
+                                  {% csrf_token %}
+                                  {{form|crispy}}
+                                  <div class="text-center py-5">
+                                      <input type="submit" class="btn btn-primary" value="Login" style="width: 80%;"
+                                          tabindex="-1">
+                                  </div>
+                              </form>
+                      </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
 
 <script>
 const stars = document.querySelectorAll('.star-modal');

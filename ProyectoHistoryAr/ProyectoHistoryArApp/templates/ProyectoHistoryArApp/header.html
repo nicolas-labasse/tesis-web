@@ -130,7 +130,10 @@
                         </div>
                     {% else %}
                         <li class="nav-item me-5">
-                            <a class="btn btn-outline-dark" href="{% url 'account_login' %}">Login</a>
+                            <a class="btn text-white" data-mdb-ripple-init style="background-color: #55acee;" href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?client_id=1091466696599-labk0vq9bnj4l44batnrr7vocd77crsg.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fwww.anitmals.com%2Faccounts%2Fgoogle%2Flogin%2Fcallback%2F&scope=profile%20email&response_type=code&state=lcPAhTrsJX4modvr&access_type=online&code_challenge_method=S256&code_challenge=N8pAlhMSEi46oPZTpT7zoqxMaWCMhT8s36mWRswzuyM&service=lso&o2v=2&theme=mn&ddm=0&flowName=GeneralOAuthFlow">
+                                <i class="fab fa-google me-2"></i>
+                                Iniciar Sesión con Google
+                            </a>
                         </li>
                     {% endif %}
                 </ul>

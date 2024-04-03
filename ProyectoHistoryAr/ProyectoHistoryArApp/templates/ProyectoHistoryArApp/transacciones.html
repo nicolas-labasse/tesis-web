@@ -38,7 +38,6 @@
                     <th>Usuario</th>
                     <th>Precio</th>
                     <th>Fecha Creacion</th>
-                    <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -57,10 +56,6 @@
                     </td>
                     <td>
                       <p class="fw-normal mb-1">{{transaccion.fechaCreacion}}</p>
-                    </td>
-                    <td>
-                      <a href="{% url 'eliminar_transaccion' transaccion.id %}" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Eliminar usuario"><i style="color:red"
-                        class="fa-solid fa-trash-can"></i></a>
                     </td>
                   </tr>
                   {% endfor %}

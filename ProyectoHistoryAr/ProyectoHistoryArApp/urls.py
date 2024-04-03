@@ -8,7 +8,6 @@ urlpatterns = [
   path('success/', success, name='success'),
   path('pending/', pending, name='pending'),
   path('failure/', failure, name='failure'),
-  path('generar_compra/', generar_compra, name='generar_compra'),
 
   #Index
   path('', home, name='home'),
@@ -61,6 +60,5 @@ urlpatterns = [
 
   #Transacciones
   path('transacciones/', transacciones, name='transacciones'),
-  path('eliminar_transaccion/<int:id>/', eliminar_transaccion, name='eliminar_transaccion'),
 
 ]

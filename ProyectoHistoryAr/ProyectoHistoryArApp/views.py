@@ -55,6 +55,7 @@ def home(request):
             data = {
                 'nombre': request.user.username,
                 'email': request.user.email,
+                'activo': True,
             } 
 
             csrftoken = get_token(request)
@@ -154,27 +155,46 @@ def recorrido_detalle(request, id):
     comentarios = response_comentario.json()
 
     comentario_json = json.dumps(comentarios)
-    form = ComentariosForm()
+    if request.user.is_authenticated:
+       form = ComentariosForm()
+    else:
+        form = AuthenticationForm()
     
     if request.method == 'POST':
-        form = ComentariosForm(request.POST)
-        if form.is_valid():
-            data = {
-                'usuario': str(request.user.id),
-                'recorrido':str(recorrido['id']),
-                'comentario': form.cleaned_data['comentario'],
-                'puntuacion': form.cleaned_data['puntuacion'],
-            }
-            csrftoken = get_token(request)
-            headers = {
-                'X-CSRFToken': csrftoken,
-            }
-            try:
-                response = requests.post(api_url, data=data, headers=headers)
-                response.raise_for_status()
-            except requests.exceptions.RequestException as e:
-                print(f'Error en la solicitud POST: {e}')
-        return redirect('recorrido_detalle', id=id)
+        if request.user.is_authenticated:
+            form = ComentariosForm(request.POST)
+            if form.is_valid():
+                data = {
+                    'usuario': str(request.user.id),
+                    'recorrido':str(recorrido['id']),
+                    'comentario': form.cleaned_data['comentario'],
+                    'puntuacion': form.cleaned_data['puntuacion'],
+                }
+                csrftoken = get_token(request)
+                headers = {
+                    'X-CSRFToken': csrftoken,
+                }
+                try:
+                    response = requests.post(api_url, data=data, headers=headers)
+                    response.raise_for_status()
+                except requests.exceptions.RequestException as e:
+                    print(f'Error en la solicitud POST: {e}')
+            return redirect('recorrido_detalle', id=id)
+        else:
+            form = AuthenticationForm(request, data=request.POST)
+            if form.is_valid():
+                username = form.cleaned_data.get('username')
+                password = form.cleaned_data.get('password')
+
+                user = authenticate(username=username, password=password)
+
+                if user is not None:
+                    login(request, user)
+                    return redirect("recorrido_detalle", id=id)
+                else:
+                    return redirect("recorrido_detalle", id=id)
+            else:
+                return redirect("recorrido_detalle", id=id)
     else:
         for comentario in comentarios:
             if request.user.id == comentario['usuario'] and recorrido['id'] == comentario['recorrido']:
@@ -267,7 +287,6 @@ def suscribirse(request):
     init_point = obtener_init_point(request)
     return render(request, 'ProyectoHistoryArApp/suscripciones.html', {'tab': tab, 'card_1': card_1, 'card_2': card_2, 'card_3': card_3, 'init_point': init_point, 'formLogin': formLogin})
 
-
 def panel_admin(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
@@ -344,6 +363,7 @@ def crear_usuario(request):
                 'email': form.cleaned_data['email'],
                 'recorridoFavorito': form.cleaned_data['recorridoFavorito'],
                 'ultimosRecorridos' : form.cleaned_data['ultimosRecorridos'],
+                'activo': True,
             }
 
             files = {}
@@ -407,13 +427,13 @@ def editar_usuario(request, id):
 
 @staff_member_required
 def eliminar_usuario(request, id):
-    api_url = BASE_URL + 'usuario/'+ 'usuarios/' + str(id) + '/'
+    api_url = BASE_URL + 'usuario/' + 'estado_usuario/' + str(id) + '/'
     csrftoken = get_token(request)
     headers = {
             'X-CSRFToken': csrftoken,
         }
     try:
-        response = requests.delete(api_url, headers=headers)
+        response = requests.put(api_url, headers=headers)
         response.raise_for_status()
         messages.success(request, 'Usuario eliminado correctamente.')
         return redirect('usuarios')
@@ -449,6 +469,13 @@ def detalle_usuario(request, id):
 def recorridos(request):
     #Recorridos
     recorridos = get_json('recorrido/')
+    puntos_activos = 0
+    for recorrido in recorridos:
+        for punto in recorrido['puntoInteres']:
+            if punto['activo'] == True:
+                puntos_activos += 1
+        if puntos_activos == 0 and recorrido['activo'] == True:
+            eliminar_recorrido(request,recorrido['id'])
 
     page = request.GET.get('page', 5)
     buscar = request.GET.get('buscar')       
@@ -462,6 +489,7 @@ def recorridos(request):
         return render(request, 'ProyectoHistoryArApp/recorridos.html', {'recorridos': recorridos, 'paginator': paginator})
     
     recorridos = paginator.get_page(page)
+    
     return render(request, 'ProyectoHistoryArApp/recorridos.html', {'recorridos': recorridos, 'paginator': paginator})
 
 @staff_member_required
@@ -499,15 +527,13 @@ def editar_recorrido(request, id):
 
 @staff_member_required
 def eliminar_recorrido(request, id):
-    api_url = BASE_URL + 'recorrido/' + str(id) + '/'
-
+    api_url = BASE_URL + 'recorrido/' + 'estado_recorrido/' + str(id) + '/'
     csrftoken = get_token(request)
     headers = {
             'X-CSRFToken': csrftoken,
         }
-
     try:
-        response = requests.delete(api_url ,headers=headers)
+        response = requests.put(api_url, headers=headers)
         response.raise_for_status()
         messages.success(request, 'Recorrido eliminado correctamente.')
         return redirect('recorridos')
@@ -537,6 +563,7 @@ def crear_recorrido(request):
                 'descripcion': form.cleaned_data['descripcion'],
                 'duracion': form.cleaned_data['duracion'],
                 'puntoInteres': form.cleaned_data['puntoInteres'],
+                'activo': True,
             }
 
             try:
@@ -576,7 +603,6 @@ def puntos_interes(request):
     puntos_interes = paginator.get_page(page)
     return render(request, 'ProyectoHistoryArApp/puntos_interes.html', {'puntos_interes': puntos_interes, 'paginator': paginator})
 
-            
 @staff_member_required
 def crear_punto_interes(request):
     api_url = BASE_URL + 'puntoInteres/'
@@ -594,6 +620,7 @@ def crear_punto_interes(request):
                 'modelo': form.cleaned_data['modelo'],
                 'latitud': form.cleaned_data['latitud'],
                 'longitud': form.cleaned_data['longitud'],
+                'activo': True,
             }
 
             files = {}
@@ -619,7 +646,6 @@ def crear_punto_interes(request):
         form = PuntosInteresForm()
 
     return render(request, 'ProyectoHistoryArApp/crear_punto_interes.html', {'form': form})
-
 
 @staff_member_required
 def editar_punto_interes(request, id):
@@ -665,13 +691,13 @@ def editar_punto_interes(request, id):
 
 @staff_member_required
 def eliminar_punto_interes(request, id):
-    api_url = BASE_URL + 'puntoInteres/' + str(id) + '/'
+    api_url = BASE_URL + 'puntoInteres/' + 'estado_puntoInteres/' + str(id) + '/'
     csrftoken = get_token(request)
     headers = {
             'X-CSRFToken': csrftoken,
         }
     try:
-        response = requests.delete(api_url, headers=headers)
+        response = requests.put(api_url, headers=headers)
         response.raise_for_status()
         messages.success(request, 'Punto de interés eliminado correctamente.')
         return redirect('puntos_interes')
@@ -717,30 +743,6 @@ def transacciones(request):
 
     return render(request, 'ProyectoHistoryArApp/transacciones.html', {'transacciones': transacciones, 'paginator': paginator})
 
-
-@staff_member_required
-def eliminar_transaccion(request, id):
-    api_url = BASE_URL + 'transaccion/' + str(id) + '/'
-    csrftoken = get_token(request)
-    headers = {
-            'X-CSRFToken': csrftoken,
-        }
-    try:
-        response = requests.delete(api_url, headers=headers)
-        response.raise_for_status()
-        messages.success(request, 'Transacción eliminada correctamente.')
-        return redirect('transacciones')
-    except requests.exceptions.RequestException as e:
-        print(f'Error en la solicitud DELETE: {e}')
-        messages.error(request, 'Error en la eliminación de la transacción, por favor intente nuevamente.')
-        return redirect('transacciones')
-
-
-def generar_compra(request):
-    init_point = obtener_init_point(request)
-    
-    return render(request, 'ProyectoHistoryArApp/generar_compra.html', {'init_point': init_point})
-
 def obtener_init_point(request):
     url = 'https://api.mercadopago.com/checkout/preferences'
     params = {'id': request.user.id}
@@ -761,8 +763,7 @@ def obtener_init_point(request):
         ],
         "notification_url": f"https://tesis-web.onrender.com/api/transaccion/?id={request.user.id}",
         "back_urls": {
-            #cambiar el success por la url de la app
-            "success": "https://127.0.0.1:8000/success",
+            "success": "https://tesis-web.onrender.com/success",
             "pending": "https://tesis-web.onrender.com/pending",
             "failure": "https://tesis-web.onrender.com/failure"
         },
@@ -776,8 +777,6 @@ def obtener_init_point(request):
         error_message = f'Error al obtener el init_point: {response.text}'
         return None, error_message
 
-
-
 def verificar_firma(data, signature):
     # Generar la firma local utilizando la clave secreta de Mercado Pago
     secret = settings.MERCADO_PAGO_WEBHOOK_SECRET
@@ -785,7 +784,6 @@ def verificar_firma(data, signature):
     
     # Comparar la firma local con la firma recibida
     return hmac.compare_digest(local_signature, signature)
-
 
 def success(request):
     return redirect('suscribirse')
@@ -795,7 +793,6 @@ def pending(request):
 
 def failure(request):
     return render(request, 'ProyectoHistoryArApp/failure.html')
-
 
 def favoritos(request, id):
     id_usuario = request.user.id

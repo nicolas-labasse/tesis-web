@@ -35,22 +35,24 @@
                         <div class="col-9 text-start">
                             <h6 class="card-title">Punto de Interes:</h6>
                         </div>
-                        {% for punto in recorrido.puntoInteres %}
-                        <div class="d-flex align-items-center mt-2">
-                            <img
-                                src="{{punto.imagen}}"
-                                alt="Imagen del punto de interes {{punto.nombre}}"
-                                style="width: 45px; height: 45px"
-                                />
-                            <div class="ms-3">
-                              <p class="fw-bold mb-1 text-start">{{punto.nombre}}</p>
-                              <div class="d-flex">
-                              <p class="mb-0"><span class="fw-bold">Latitud:</span> {{punto.latitud}} </p>
-                              <p class="mb-0 ms-2"><span class="fw-bold">Longitud:</span> {{punto.longitud}}</p>
-                              </div>
+                          {% for punto in recorrido.puntoInteres %}
+                            {% if punto.activo == True %}
+                            <div class="d-flex align-items-center mt-2">
+                                <img
+                                    src="{{punto.imagen}}"
+                                    alt="Imagen del punto de interes {{punto.nombre}}"
+                                    style="width: 45px; height: 45px"
+                                    />
+                                <div class="ms-3">
+                                  <p class="fw-bold mb-1 text-start">{{punto.nombre}}</p>
+                                  <div class="d-flex">
+                                  <p class="mb-0"><span class="fw-bold">Latitud:</span> {{punto.latitud}} </p>
+                                  <p class="mb-0 ms-2"><span class="fw-bold">Longitud:</span> {{punto.longitud}}</p>
+                                  </div>
+                                </div>
                             </div>
-                          </div>
-                        {% endfor %}
+                            {% endif %}
+                          {% endfor %}
                     </div>
                   </div>
                 </div>

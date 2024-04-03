@@ -42,18 +42,23 @@
         <div class="col table-responsive-lg">
             <table class="table align-middle mb-0 bg-white">
                 <thead class="bg-light">
-                  <tr>
+                  <tr >
                     <th>Nombre</th>
                     <th>Duracion</th>
                     <th>Descripcion</th>
                     <th class="d-none d-md-block">Puntos de Interes</th>
                     <th class="d-block d-md-none" data-mdb-toggle="tooltip" data-mdb-placement="top" title="Puntos de interes">P.Interes</th>
+                    <th>Activo</th>
                     <th>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {% for recorrido in recorridos %}
-                  <tr>
+                  {% if recorrido.activo == False %}
+                    <tr class="table-active">
+                    {% else %}
+                    <tr>
+                    {% endif %}
                     <td>
                       <div class="d-flex align-items-center">
                         <div class="ms-3">
@@ -70,14 +75,23 @@
                     <td>
                       <div>
                         {% for punto in recorrido.puntoInteres %}
+                        {% if punto.activo == True %}
                         {% if forloop.counter0|divisibleby:2 and not forloop.first %}
                         <p>
                         {% endif %}
                         {{ punto.nombre|capfirst }},
+                        {% endif %}
                         {% endfor %}
+                        
                         </p>
                       </div>
                     </td>
+                    <td>
+                      {% if recorrido.activo == False or puntos_activos == 0 %}
+                      <i class="fa-solid fa-circle-xmark ms-2" style="color: red;"></i>
+                      {% else %}
+                      <i class="fa-solid fa-circle-check ms-2" style="color: green;"></i>
+                      {% endif %}
                     <td>
                       <a href="{% url 'detalle_recorrido' recorrido.id %}" data-mdb-toggle="tooltip" data-mdb-placement="top" title="ver recorrido"><i style="color:blue"
                         class="fa-solid fa-eye"></i></a>
