@@ -39,7 +39,7 @@ class RecorridoApiForm(forms.ModelForm):
 
 class PuntosInteresForm(forms.ModelForm):
     nombre = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    modelo = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    modelo = forms.CharField(widget=forms.FileInput(attrs={'class': 'form-control'}))
     latitud = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     longitud = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     imagen = forms.ImageField(widget=forms.FileInput(attrs={'class': 'form-control'}))

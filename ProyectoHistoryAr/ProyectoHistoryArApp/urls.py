@@ -1,8 +1,6 @@
 from django import views
 from django.urls import path
 from ProyectoHistoryArApp.views import *
-
-
 urlpatterns = [
   #Paths de prueba que debo borrar
   path('success/', success, name='success'),
@@ -26,6 +24,9 @@ urlpatterns = [
   path('perfil/<int:id>', perfil, name='perfil'),
   path('editar_imagen_perfil/', editar_imagen_perfil, name='editar_imagen_perfil'),
   path('eliminar_favorito/', eliminar_favorito, name='eliminar_favorito'),
+
+  #Comentario
+  path('eliminar_comentario/<int:id>/<int:id_recorrido>/', eliminar_comentario, name='eliminar_comentario'),
 
   #Recorrido
   path('recorrido/', recorrido, name='recorrido'),

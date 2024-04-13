@@ -45,3 +45,4 @@ def custom_nombre_usuario(request):
     except Exception as e:
         print(f"Error en custom_nombre_usuario: {e}")
         return {'nombre_usuario': ''}
+    

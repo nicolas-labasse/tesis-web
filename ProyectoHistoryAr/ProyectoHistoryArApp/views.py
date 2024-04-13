@@ -1,6 +1,6 @@
+from django.urls import reverse
 import math
 from django.conf import settings
-from django.http import JsonResponse
 from django.shortcuts import render,redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
@@ -13,15 +13,14 @@ from django.core.paginator import Paginator
 from urllib3.exceptions import InsecureRequestWarning
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 import hmac
 import hashlib
 import datetime
-from datetime import timedelta
 from django.template.loader import render_to_string
 from django.contrib import messages
 from django.core.mail import EmailMessage
+from django.http import HttpResponseRedirect
+from django.contrib.auth import logout
 
 """BASE_URL = 'https://tesis-web.onrender.com/api/'"""
 BASE_URL = 'http://192.168.1.2:8081/api/'
@@ -39,8 +38,10 @@ def home(request):
     api_url = BASE_URL + 'usuario/' + 'usuarios/'
     response = requests.get(api_url)
     usuarios = response.json()
-    
+
     usuario_registrado = False
+    usuario_inactivo = False
+
     if request.user.is_authenticated:
         for usuario in usuarios:
             if request.user.email == usuario['email']:
@@ -80,13 +81,20 @@ def home(request):
                 response.raise_for_status()  
             except requests.exceptions.RequestException as e:
                 print(f'Error en la solicitud POST: {e}')
+    if request.user.is_authenticated:
+        for usuario in usuarios:
+            if request.user.email == usuario['email']:
+                if usuario['activo'] == False:
+                    usuario_inactivo = True
+                    logout(request)
+                    messages.error(request, 'Usuario inactivo, por favor contacte al administrador.')
 
-    return render(request, 'ProyectoHistoryArApp/index.html', {'tab': tab, 'usuarios': usuarios, 'texto_intro': texto_intro, 'texto_sm': texto_sm})
+    return render(request, 'ProyectoHistoryArApp/index.html', {'tab': tab, 'usuarios': usuarios, 'texto_intro': texto_intro, 'texto_sm': texto_sm, 'usuario_inactivo': usuario_inactivo})
 
 def recorrido(request):
         tab = 'recorrido'
         #Recorridos
-        recorridos = get_json('recorrido/')
+        recorridos = get_json('recorrido/recorrido/')
 
         buscar = request.GET.get('buscar')      
 
@@ -145,28 +153,25 @@ def recorrido(request):
         return render(request, 'ProyectoHistoryArApp/recorrido.html', {'tab': tab, 'recorridos': recorridos, 'nombres1': nombres1, 'nombres2': nombres2, 'favoritos': favoritos, 'form': form})
 
 def recorrido_detalle(request, id):
-    #Recorridos
     tab = 'recorrido'
-    recorrido = get_json('recorrido/' + str(id) + '/')
-
-    #Comentarios
+    recorrido = get_json('recorrido/recorrido/' + str(id) + '/')
     api_url = BASE_URL + 'calificacion/'
     response_comentario = requests.get(api_url)
     comentarios = response_comentario.json()
-
     comentario_json = json.dumps(comentarios)
+    
     if request.user.is_authenticated:
-       form = ComentariosForm()
+        form = ComentariosForm()
     else:
         form = AuthenticationForm()
-    
+
     if request.method == 'POST':
         if request.user.is_authenticated:
             form = ComentariosForm(request.POST)
             if form.is_valid():
                 data = {
                     'usuario': str(request.user.id),
-                    'recorrido':str(recorrido['id']),
+                    'recorrido': str(recorrido['id']),
                     'comentario': form.cleaned_data['comentario'],
                     'puntuacion': form.cleaned_data['puntuacion'],
                 }
@@ -179,41 +184,40 @@ def recorrido_detalle(request, id):
                     response.raise_for_status()
                 except requests.exceptions.RequestException as e:
                     print(f'Error en la solicitud POST: {e}')
-            return redirect('recorrido_detalle', id=id)
+                return redirect('recorrido_detalle', id=id)
         else:
             form = AuthenticationForm(request, data=request.POST)
             if form.is_valid():
                 username = form.cleaned_data.get('username')
                 password = form.cleaned_data.get('password')
-
                 user = authenticate(username=username, password=password)
-
                 if user is not None:
                     login(request, user)
                     return redirect("recorrido_detalle", id=id)
-                else:
-                    return redirect("recorrido_detalle", id=id)
-            else:
-                return redirect("recorrido_detalle", id=id)
     else:
+        comentario_existente = None
         for comentario in comentarios:
             if request.user.id == comentario['usuario'] and recorrido['id'] == comentario['recorrido']:
-                initial_data = {
-                    'usuario': request.user.id,
-                    'recorrido': recorrido['id'],
-                    'puntuacion': comentario['puntuacion'],
-                    'comentario': comentario['comentario'],
-                }
-                form = ComentariosForm(initial=initial_data)
+                comentario_existente = comentario
                 break
-            else:
-                initial_data = {
-                    'usuario': request.user.id,
-                    'recorrido': recorrido['id'],
-                    'puntuacion': '',
-                    'comentario': '',
-                }
-                form = ComentariosForm(initial=initial_data)
+
+        if request.user.is_authenticated and comentario_existente:
+            initial_data = {
+                'usuario': request.user.id,
+                'recorrido': recorrido['id'],
+                'puntuacion': comentario_existente['puntuacion'],
+                'comentario': comentario_existente['comentario'],
+            }
+            form = ComentariosForm(initial=initial_data)
+        elif request.user.is_authenticated:
+            initial_data = {
+                'usuario': request.user.id,
+                'recorrido': recorrido['id'],
+                'puntuacion': '',
+                'comentario': '',
+            }
+            form = ComentariosForm(initial=initial_data)
+
     calificaciones = []
     usuarios = []
     puntuacion = 0
@@ -222,12 +226,12 @@ def recorrido_detalle(request, id):
     for comentario in comentarios:
         if comentario['recorrido'] == recorrido['id']:
             calificaciones.append(comentario)
-            puntuacion_total  += comentario['puntuacion']
+            puntuacion_total += comentario['puntuacion']
             cantidad_calificaciones += 1
             api_url_user = BASE_URL + 'usuario/' + 'usuarios/' + str(comentario['usuario']) + '/'
             response_user = requests.get(api_url_user)
             usuarios.append(response_user.json())
-    
+
     if cantidad_calificaciones > 0:
         puntuacion = math.ceil((puntuacion_total / (cantidad_calificaciones * 5)) * 5)
     else:
@@ -235,8 +239,16 @@ def recorrido_detalle(request, id):
 
     for calificacion in calificaciones:
         calificacion['stars_range'] = range(calificacion['puntuacion'])
-    
-    return render(request, 'ProyectoHistoryArApp/recorrido_detalle.html', {'tab': tab, 'form':form, 'recorrido': recorrido, 'calificaciones': calificaciones, 'usuarios': usuarios, 'puntuacion': puntuacion,'comentario_json': comentario_json})
+
+    return render(request, 'ProyectoHistoryArApp/recorrido_detalle.html', {
+        'tab': tab,
+        'form': form,
+        'recorrido': recorrido,
+        'calificaciones': calificaciones,
+        'usuarios': usuarios,
+        'puntuacion': puntuacion,
+        'comentario_json': comentario_json
+    })
 
 @login_required
 def suscripciones(request):
@@ -251,7 +263,7 @@ def suscripciones(request):
     for t in transacciones:
         if t['usuario'] == request.user.id:
             fecha_creacion = datetime.datetime.strptime(t['fechaCreacion'], '%Y-%m-%d')
-            fecha_exp = fecha_creacion + datetime.timedelta(days=1)
+            fecha_exp = fecha_creacion + datetime.timedelta(days=30)
             if fecha_exp > datetime.datetime.now():
                 suscripcione_valida = True
                 fecha_expiracion.append(fecha_exp)
@@ -294,7 +306,7 @@ def panel_admin(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
 
-            user = authenticate(username=username, password=password)
+            user = authenticate(username=username, password=password, is_staff=True)
 
             if user is not None:
                 login(request, user)
@@ -468,7 +480,7 @@ def detalle_usuario(request, id):
 @staff_member_required
 def recorridos(request):
     #Recorridos
-    recorridos = get_json('recorrido/')
+    recorridos = get_json('recorrido/recorrido/')
     puntos_activos = 0
     for recorrido in recorridos:
         for punto in recorrido['puntoInteres']:
@@ -494,7 +506,7 @@ def recorridos(request):
 
 @staff_member_required
 def editar_recorrido(request, id):
-    api_url = BASE_URL + 'recorrido/' + str(id) + '/'
+    api_url = BASE_URL + 'recorrido/recorrido/' + str(id) + '/'
     csrftoken = get_token(request)
     headers = {
             'X-CSRFToken': csrftoken,
@@ -544,12 +556,12 @@ def eliminar_recorrido(request, id):
 
 @staff_member_required
 def detalle_recorrido(request, id):
-    recorrido = get_json('recorrido/' + str(id) + '/')
+    recorrido = get_json('recorrido/recorrido/' + str(id) + '/')
     return render(request, 'ProyectoHistoryArApp/detalle_recorrido.html', {'recorrido': recorrido})
 
 @staff_member_required
 def crear_recorrido(request):
-    api_url = BASE_URL + 'recorrido/'
+    api_url = BASE_URL + 'recorrido/recorrido/'
     csrftoken = get_token(request)
     headers = {
         'X-CSRFToken': csrftoken,
@@ -622,8 +634,13 @@ def crear_punto_interes(request):
                 'longitud': form.cleaned_data['longitud'],
                 'activo': True,
             }
-
+            
             files = {}
+
+            if 'modelo' in request.FILES:
+                modelo_file = request.FILES['modelo']
+                files['modelo'] = (modelo_file.name, modelo_file.read())
+
             
             if 'imagen' in request.FILES:
                 imagen_file = request.FILES['imagen']
@@ -710,6 +727,25 @@ def eliminar_punto_interes(request, id):
 def detalle_punto_interes(request, id):
     punto = get_json('puntoInteres/' + str(id) + '/')
     return render(request, 'ProyectoHistoryArApp/detalle_punto_interes.html', {'punto': punto})
+
+
+#Calificaciones
+@staff_member_required
+def eliminar_comentario(request, id, id_recorrido):
+    api_url = BASE_URL + 'calificacion/' +  str(id) + '/' 
+    csrftoken = get_token(request)
+    headers = {
+            'X-CSRFToken': csrftoken,
+        }
+    try:
+        response = requests.delete(api_url, headers=headers)
+        response.raise_for_status()
+        messages.success(request, 'Comentario eliminado correctamente.')
+        return HttpResponseRedirect(reverse('recorrido_detalle', args=[id_recorrido]))
+    except requests.exceptions.RequestException as e:
+        print(f'Error en la solicitud DELETE: {e}')
+        messages.error(request, 'Error en la eliminación del comentario, por favor intente nuevamente.')
+        return HttpResponseRedirect(reverse('recorrido_detalle', args=[id_recorrido]))
 
 #Transacciones
 @staff_member_required
@@ -859,11 +895,11 @@ def perfil(request,id):
 
 
     ultimo_recorrido = ''
-    imagen_url = ''
+    recorrido = ''
             
     for recorrido in recorridos:
         if 'recorridoFavorito' in usuario and usuario['recorridoFavorito'] == recorrido['id'] and usuario['recorridoFavorito'] is not None:
-            imagen_url = recorrido['puntoInteres']
+            recorrido = recorrido
         if 'ultimosRecorridos' in usuario and usuario['ultimosRecorridos'] is not None:
             usuario['ultimosRecorridos'] = recorrido['nombre']
 
@@ -882,12 +918,12 @@ def perfil(request,id):
                 response = requests.put(api_url, data=data, headers=headers)
                 response.raise_for_status()
                 
-                return render(request, 'ProyectoHistoryArApp/perfil.html', {'usuario': usuario, 'form': form, 'ultimo_recorrido': ultimo_recorrido, 'imagen_url': imagen_url})
+                return render(request, 'ProyectoHistoryArApp/perfil.html', {'usuario': usuario, 'form': form, 'ultimo_recorrido': ultimo_recorrido, 'recorrido': recorrido})
             except requests.exceptions.RequestException as e:
                 print(f'Error en la solicitud PUT: {e}')
     else:
         form = UsuarioPerfilForm(usuario)
-    return render(request, 'ProyectoHistoryArApp/perfil.html', {'usuario': usuario, 'form': form , 'imagen_url': imagen_url})
+    return render(request, 'ProyectoHistoryArApp/perfil.html', {'usuario': usuario, 'form': form , 'recorrido': recorrido})
 
 @login_required
 def editar_imagen_perfil(request):
@@ -953,7 +989,5 @@ def get_json(endpoint):
     except requests.exceptions.RequestException as e:
         print(f'Error en la solicitud GET: {e}')
         return None
-
-
 
 

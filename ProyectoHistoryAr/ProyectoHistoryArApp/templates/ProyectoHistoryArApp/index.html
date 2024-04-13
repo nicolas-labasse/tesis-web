@@ -4,11 +4,21 @@
 
 {% block contenidoPagina %}
 <!--Section Imagen Homne-->
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'alert-danger' %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
 <section>
   <div class="container-fluid fondo-home text-white">
     <div class="row align-items-center" style="height: 45vh;">
       <div class="col-12 col-md-6 text-center p-0">
-        <h1 class="card-title">HisotryAr</h1>
+        <h1 class="card-title">HistoryAr</h1>
         <div class="row justify-content-center m-0">
             <div class="col-12">
                 <p class="card-text h4 text-center">
@@ -219,6 +229,7 @@
   }
 
   document.getElementById('texto_btn').addEventListener('click', toggleText);
+
 </script>
 
 {% endblock %}

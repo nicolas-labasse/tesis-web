@@ -41,7 +41,7 @@
                   alt="HistoryAr logo"
                   loading="lazy"
                 />
-                <small>HisotryAr</small>
+                <small>HistoryAr</small>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -119,6 +119,7 @@
                                 </div>
                             <hr>
                             <li><a class="dropdown-item" href="{% url 'perfil' request.user.id %}">Perfil</a></li>
+                            
                             {% if request.user.is_staff %}
                                 <li><a class="dropdown-item" href="{% url 'panel_admin' %}">Panel Admin</a></li>
                                 <li><a class="dropdown-item" href="{% url 'suscripciones' %}">Mi Suscripcion</a></li>
@@ -130,7 +131,8 @@
                         </div>
                     {% else %}
                         <li class="nav-item me-5">
-                            <a class="btn text-white" data-mdb-ripple-init style="background-color: #55acee;" href="https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?client_id=1091466696599-labk0vq9bnj4l44batnrr7vocd77crsg.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Fwww.anitmals.com%2Faccounts%2Fgoogle%2Flogin%2Fcallback%2F&scope=profile%20email&response_type=code&state=lcPAhTrsJX4modvr&access_type=online&code_challenge_method=S256&code_challenge=N8pAlhMSEi46oPZTpT7zoqxMaWCMhT8s36mWRswzuyM&service=lso&o2v=2&theme=mn&ddm=0&flowName=GeneralOAuthFlow">
+                                <a class="btn text-white" data-mdb-ripple-init style="background-color: #55acee;
+                                " href="/accounts/google/login/?process=login">
                                 <i class="fab fa-google me-2"></i>
                                 Iniciar Sesión con Google
                             </a>

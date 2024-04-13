@@ -53,8 +53,11 @@
                 </thead>
                 <tbody>
                   {% for usuario in usuarios %}
-                  {% if usuario.activo != False  %}
+                  {% if usuario.activo == False  %}
+                  <tr class="table-active">
+                  {% else %}
                   <tr>
+                  {% endif %}
                     <td>
                       <p class="fw-normal mb-1">{{usuario.id|capfirst}}</p>
                     </td>
@@ -95,7 +98,6 @@
                               class="fa-solid fa-trash-can"></i></a>
                   </td>
                   </tr>
-                  {% endif %}
                   {% endfor %}
                 </tbody>
             </table>

@@ -47,7 +47,14 @@
                                         </form>
                                     </div>
                                     <div class="col-12 p-0">
-                                        <p><span class="fw-bold p-4">Ultimo recorrido:</span> <span>{{usuario.ultimosRecorridos|capfirst}}</span></p>
+                                        <p><span class="fw-bold p-4">Ultimo recorrido:</span>
+                                            {% if usuario.ultimosRecorridos == None %}
+                                            <span>No hay recorridos</span>
+                                            {% else %}
+                                            <span>{{usuario.ultimosRecorridos|capfirst}}
+                                            {% endif %}
+                                            </span>
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -55,13 +62,13 @@
                         {% if usuario.recorridoFavorito != None %}
                         <div class="container-fluid">
                             <div class="row justify-content-center">
-                                <div class="col-10 mt-5">
+                                <div class="col-10 mt-5" style="justify-content: center;display: flex;">
                                     <a href="{% url 'eliminar_favorito'  %}">
                                         <div class="card-wrapper">
-                                            <div class="card bg-dark text-white">
+                                            <div class="card bg-dark text-whit">
                                                 {% for punto in recorrido.puntoInteres %}
                                                     {% if forloop.first %}
-                                                    <img src="{{punto.imagen}}" class="card-img" alt="Imagen del recorrido favorito del usuario"/>
+                                                    <img src="{{ punto.imagen }}" class="card-img" style="max-height: 250px"  alt="Imagen del recorrido favorito del usuario"/>
                                                     {% endif %}
                                                 {% endfor %}
                                                 <div class="card-img-overlay">
